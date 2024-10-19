@@ -5,6 +5,9 @@ import { addProductsSchema } from "../../schemas";
 import { toast } from "react-toastify";
 import { MotionDiv } from "../content/MotionDiv";
 import { addProduct } from "../../firebase/services";
+import { RootState } from "../../stores";
+import { useSelector } from "react-redux";
+import { AlertMotion } from "../content/AlertMotion";
 
 interface IFormInput {
   title: string;
@@ -19,6 +22,8 @@ interface ModAddProduct {
 
 export const MoAddProduct: React.FC<ModAddProduct> = ({ onOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { isValidAdmin } = useSelector((state: RootState) => state.auth);
+
   const {
     register,
     handleSubmit,
@@ -36,6 +41,10 @@ export const MoAddProduct: React.FC<ModAddProduct> = ({ onOpen, onClose }) => {
   // Watch errors to show error messages
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    if (!isValidAdmin) {
+      toast.error("You are not allowed to add products");
+      return;
+    }
     console.log(data);
     try {
       setIsLoading(true);
@@ -60,6 +69,17 @@ export const MoAddProduct: React.FC<ModAddProduct> = ({ onOpen, onClose }) => {
           className="flex flex-col gap-4"
           onSubmit={handleSubmit(onSubmit)}
         >
+          <AlertMotion
+            message={
+              isValidAdmin
+                ? "You are allowed to add products"
+                : "You are not allowed to add products"
+            }
+            props={{
+              variant: "subtle",
+              status: isValidAdmin ? "success" : "error",
+            }}
+          />
           {/* Show a preview of the image */}
           {imgUrl?.length > 5 && !errors.imgUrl && (
             <MotionDiv>
@@ -115,7 +135,11 @@ export const MoAddProduct: React.FC<ModAddProduct> = ({ onOpen, onClose }) => {
             />
           </div>
 
-          <button className="mySecondaryBtn" type="submit" disabled={isLoading}>
+          <button
+            className="mySecondaryBtn"
+            type="submit"
+            disabled={isLoading || !isValidAdmin}
+          >
             {isLoading ? "Adding..." : "Add Product"}
           </button>
         </form>

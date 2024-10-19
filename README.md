@@ -1,50 +1,42 @@
-# React + TypeScript + Vite
+# Firebase Auth + Redux Toolkit - Products CRUD
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Task developed by [**@1frencho**](https://github.com/1frencho) assigned from Kodigo Academy.
 
-Currently, two official plugins are available:
+### Desktop Demo - Authenticated
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<img src="./captures/imageAuth.png" alt="Auth Desktop" width="100%">
 
-## Expanding the ESLint configuration
+### Desktop Demo - Product List
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+<img src="./captures/products.png" alt="Products Desktop" width="100%">
 
-- Configure the top-level `parserOptions` property like this:
+### Desktop Demo - Add Products Modal
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+<img src="./captures/addProducts.png" alt="Add Products Desktop" width="100%">
+
+## Technologies used
+
+- Vanilla JS (Build with Vite)
+- TypeScript
+- Firebase: PRODUCTS CRUD
+
+## Libraries/Packages used:
+
+- Tailwind CSS
+- Chakra UI (UI) - Just for (SideMenu, Drawer), other components are made with Tailwind CSS
+- Framer Motion
+- React Hook Form (Task applied on Auth Form)
+- Yup with React Hook Form
+- React Router
+- React Icons
+- Redux Toolkit
+
+## Use development workspace:
+
+```
+npm install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```
+npm run dev
 ```

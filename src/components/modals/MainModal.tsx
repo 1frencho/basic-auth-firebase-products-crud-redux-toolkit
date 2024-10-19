@@ -26,7 +26,7 @@ interface MainModal {
     | "6xl"
     | "full";
 }
-export function MainModal({
+function MainModal({
   isOpen,
   onClose,
   title,
@@ -52,3 +52,5 @@ export function MainModal({
     </>
   );
 }
+
+export default MainModal;

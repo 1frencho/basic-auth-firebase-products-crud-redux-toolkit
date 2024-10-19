@@ -5,6 +5,9 @@ import { addProductsSchema } from "../../schemas";
 import { toast } from "react-toastify";
 import { MotionDiv } from "../content/MotionDiv";
 import { getProductById, updateProduct } from "../../firebase/services";
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores";
+import { AlertMotion } from "../content/AlertMotion";
 
 export interface IFormInput {
   title: string;
@@ -24,6 +27,7 @@ export const MoEditProduct: React.FC<ModAddProduct> = ({
   id,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { isValidAdmin } = useSelector((state: RootState) => state.auth);
 
   const {
     register,
@@ -49,6 +53,10 @@ export const MoEditProduct: React.FC<ModAddProduct> = ({
   const imgUrl = watch("imgUrl");
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    if (!isValidAdmin) {
+      toast.error("You are not allowed to edit products");
+      return;
+    }
     console.log(data);
     try {
       setIsLoading(true);
@@ -73,6 +81,17 @@ export const MoEditProduct: React.FC<ModAddProduct> = ({
           className="flex flex-col gap-4"
           onSubmit={handleSubmit(onSubmit)}
         >
+          <AlertMotion
+            message={
+              isValidAdmin
+                ? "You are allowed to edit products"
+                : "You are not allowed to edit products"
+            }
+            props={{
+              variant: "subtle",
+              status: isValidAdmin ? "success" : "error",
+            }}
+          />
           {/* Show a preview of the image */}
           {imgUrl?.length > 5 && (
             <MotionDiv>
@@ -133,7 +152,11 @@ export const MoEditProduct: React.FC<ModAddProduct> = ({
             />
           </div>
 
-          <button className="mySecondaryBtn" type="submit" disabled={isLoading}>
+          <button
+            className="mySecondaryBtn"
+            type="submit"
+            disabled={isLoading || !isValidAdmin}
+          >
             {isLoading ? "Updating..." : "Update Product"}
           </button>
         </form>

@@ -1,58 +1,61 @@
+import { FcGoogle } from "react-icons/fc";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { signInSchema } from "../../schemas";
+import { signUpSchema } from "../../schemas";
 import { MyLogo } from "../content/MyLogo";
-import { signIn, signInWithGoogle } from "../../firebase/services/authSession";
-import { MySmallLoading } from "../content/MySmallLoading";
-import { FcGoogle } from "react-icons/fc";
-import { useState } from "react";
+import { createUser } from "../../firebase/services/";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { MySmallLoading } from "../content/MySmallLoading";
+import { signInWithGoogle } from "../../firebase/services/authSession";
 import { AlertMotion } from "../content/AlertMotion";
 import { FirebaseError } from "firebase/app";
 
 interface IFormInput {
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
-export const SignInForm = () => {
+export const SignUpForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<IFormInput>({
-    resolver: yupResolver(signInSchema),
+    resolver: yupResolver(signUpSchema),
   });
-
-  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    setIsLoading(true);
-    setAuthError(null);
-    try {
-      const { user } = await signIn(data.email, data.password);
+  const navigate = useNavigate();
 
-      // Check if email is verified - Boolean
-      // if (!user.emailVerified) {
-      //   toast.warning("Please verify your email");
-      //   return;
-      // }
-      if (!user.email) {
-        return;
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    console.log(data);
+
+    setIsLoading(true);
+    try {
+      const user = await createUser(data.email, data.password);
+      if (user.user) {
+        navigate("/");
+        console.log(user.user);
       }
-      navigate("/");
     } catch (error) {
-      //
+      console.log(error);
       if (error instanceof FirebaseError) {
         switch (error.code) {
-          case "auth/user-disabled":
-            setAuthError("User disabled");
+          case "auth/email-already-in-use":
+            setAuthError("Email already in use");
             break;
-          case "auth/invalid-credential":
-            setAuthError("Invalid credentials");
+          case "auth/invalid-email":
+            setAuthError("Invalid email");
+            break;
+          case "auth/operation-not-allowed":
+            setAuthError("Operation not allowed");
+            break;
+          case "auth/weak-password":
+            setAuthError("Weak password");
             break;
           default:
             setAuthError(error.message);
@@ -65,12 +68,11 @@ export const SignInForm = () => {
   };
 
   const handleLoginWithGoogle = async () => {
-    setAuthError(null);
     try {
       const response = await signInWithGoogle();
       if (response.user.email) {
         navigate("/");
-        localStorage.setItem("firebaseUser", JSON.stringify(response.user));
+        // localStorage.setItem("firebaseUser", JSON.stringify(response.user));
       }
     } catch (error) {
       console.log(error);
@@ -82,15 +84,14 @@ export const SignInForm = () => {
       <section className="flex flex-col items-center justify-center px-4 py-14">
         <div className="myCard">
           <form
-            id="signInForm"
+            id="signUpForm"
             className="flex w-[60vw] flex-col gap-4"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="flex flex-col items-center gap-4">
               <MyLogo />
-              <h2 className="text-2xl font-semibold">Sign into your account</h2>
+              <h2 className="text-2xl font-semibold">Create test account</h2>
             </div>
-
             {authError && (
               <AlertMotion
                 message={authError}
@@ -108,7 +109,7 @@ export const SignInForm = () => {
               <input
                 {...register("email")}
                 className="myInput"
-                type="text"
+                type="email"
                 id="email"
               />
             </div>
@@ -126,15 +127,31 @@ export const SignInForm = () => {
                 id="password"
               />
             </div>
-            <button className="myPrimaryBtn" type="submit">
+            <div className="flex flex-col gap-2">
+              <label htmlFor="password" className="text-sm font-medium">
+                Confirm Password:
+                <span className="text-myPrimary">
+                  *{" "}
+                  {errors.confirmPassword &&
+                    `(${errors.confirmPassword.message})`}
+                </span>
+              </label>{" "}
+              <input
+                {...register("confirmPassword")}
+                className="myInput"
+                type="password"
+                id="confirmPassword"
+              />
+            </div>
+            <button className="myPrimaryBtn" type="submit" disabled={isLoading}>
               {isLoading && <MySmallLoading />}
-              Log In
+              Sign Up
             </button>
             <button
               className="myWhiteBtn"
               disabled={isLoading}
-              type="button"
               onClick={handleLoginWithGoogle}
+              type="button"
             >
               {isLoading && <MySmallLoading />}
               <FcGoogle />

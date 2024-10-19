@@ -2,16 +2,6 @@ import * as yup from "yup";
 
 export const signUpSchema = yup
   .object({
-    firstName: yup
-      .string()
-      .required("Field required")
-      .matches(/^[a-zA-ZñÑáéíóúÁÉÍÓÚ' ]*$/, "Invalid Characters")
-      .min(3, "Min 3 length"),
-    lastName: yup
-      .string()
-      .required("Field required")
-      .matches(/^[a-zA-ZñÑáéíóúÁÉÍÓÚ' ]*$/, "Invalid Characters")
-      .min(3, "Min 3 length"),
     email: yup
       .string()
       .required("Field required")

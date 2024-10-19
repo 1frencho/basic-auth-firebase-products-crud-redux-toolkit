@@ -1,13 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "../App";
 import { HomePage, NotFoundPage, ProductsPage } from "../pages/home/index.lazy";
 import { Loader } from "../components/content/Loader";
 import { SignIn, SignUp } from "../pages/auth/index.lazy";
+import { MainApp } from "../index.lazy";
+import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 
 export const mainRouter = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <Loader>
+        <MainApp />
+      </Loader>
+    ),
     children: [
       {
         path: "",
@@ -20,9 +25,11 @@ export const mainRouter = createBrowserRouter([
       {
         path: "/products/",
         element: (
-          <Loader timeout={300}>
-            <ProductsPage />
-          </Loader>
+          <ProtectedRoute>
+            <Loader timeout={300}>
+              <ProductsPage />
+            </Loader>
+          </ProtectedRoute>
         ),
       },
       {

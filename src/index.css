@@ -28,23 +28,39 @@ body {
 }
 
 .myPrimaryBtn {
-  @apply flex items-center justify-center gap-2 rounded-xl bg-myPrimary px-4 py-2 font-semibold text-white transition-all;
+  @apply flex h-10 items-center justify-center gap-2 rounded-xl bg-myPrimary px-4 py-2 font-semibold text-white transition-all;
 }
 
 .myPrimaryBtn:hover {
   @apply hover:bg-myPrimaryDark;
 }
+/* Disabled */
+.myPrimaryBtn:disabled {
+  @apply cursor-not-allowed bg-slate-200 text-slate-400;
+}
 
 .mySecondaryBtn {
-  @apply bg-mySecondary flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold text-white transition-all;
+  @apply flex h-10 items-center justify-center gap-2 rounded-xl bg-mySecondary px-4 py-2 font-semibold text-white transition-all duration-300 ease-in-out;
 }
 
 .mySecondaryBtn:hover {
   @apply hover:bg-mySecondaryDark;
 }
 
+.mySecondaryBtn:disabled {
+  @apply cursor-not-allowed bg-slate-200 text-slate-400;
+}
+
+.myWhiteBtn {
+  @apply flex items-center justify-center gap-2 rounded-xl bg-bgLight px-4 py-2 font-semibold text-black transition-all duration-300 ease-in-out;
+}
+
+.myWhiteBtn:hover {
+  @apply hover:bg-slate-200 hover:text-black;
+}
+
 .myOutlineBtn {
-  @apply flex items-center justify-center gap-2 rounded-xl border border-myPrimary px-4 py-2 font-semibold text-myPrimary transition-all;
+  @apply flex items-center justify-center gap-2 rounded-xl border border-myPrimary px-4 py-2 font-semibold text-myPrimary transition-all duration-300 ease-in-out;
 }
 
 .myOutlineBtn:hover {

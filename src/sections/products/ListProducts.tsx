@@ -1,8 +1,8 @@
 import { collection, onSnapshot } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy } from "react";
 import { db } from "../../firebase/appConfig";
 
-import { MainModal } from "../../components/modals/MainModal";
+const MainModal = lazy(() => import("../../components/modals/MainModal"));
 import { useDisclosure } from "@chakra-ui/react";
 import { ProductItem } from "../../components/products/ProductItem";
 import { MoEditProduct } from "../../components/products/MoEditProducts";
@@ -32,8 +32,6 @@ export const ListProducts = () => {
       })) as unknown as Products[];
 
       setProducts(arrayProducts);
-
-      console.log(arrayProducts);
       return () => {
         onClose(); // Optionally close when unmounted to reset state
       };

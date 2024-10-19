@@ -4,9 +4,27 @@ import { PiSignInBold } from "react-icons/pi";
 import { MobileMenu } from "./MobileMenu";
 import { globalLinks } from "./nav.config";
 import { MyLogo } from "../content/MyLogo";
+import { AccountProfile } from "./AccountProfile";
+import { IUser, logout } from "../../stores/auth.slice";
+import { useDispatch } from "react-redux";
+import { signOut } from "firebase/auth";
+import { userAuth } from "../../firebase/appConfig";
+import { MySmallLoading } from "../content/MySmallLoading";
 
-export const NavBar = () => {
+interface NavBarPros {
+  loading: boolean;
+  success: boolean;
+  userInfo: IUser | null;
+}
+const NavBar = ({ loading, success, userInfo }: NavBarPros) => {
   const { pathname } = useLocation();
+  const dispatch = useDispatch();
+
+  // Logout user
+  const handleLogout = () => {
+    dispatch(logout());
+    signOut(userAuth);
+  };
 
   const isActivePath = (path: string, currentPath: string) => {
     return path === currentPath;
@@ -36,18 +54,40 @@ export const NavBar = () => {
         </ul>
       </div>
       <ul className="flex items-center gap-2">
-        <li>
-          <Link to="/signUp" className="myOutlineBtn">
-            Sign Up
-          </Link>
-        </li>
-        <li className="hidden md:block">
-          <Link to="/signIn" className="myPrimaryBtn">
-            <PiSignInBold />
-            Sign In
-          </Link>
-        </li>
+        {/* Small loading spinner */}
+        {loading ? (
+          <li>
+            <MySmallLoading />
+          </li>
+        ) : null}
+        {/* If request is ended and user is not logged in */}
+        {!loading && !success ? (
+          <>
+            <li className="hidden md:block">
+              <Link to="/signUp" className="myOutlineBtn">
+                Sign Up
+              </Link>
+            </li>
+            <li>
+              <Link to="/signIn" className="myPrimaryBtn">
+                <PiSignInBold />
+                Sign In
+              </Link>
+            </li>
+          </>
+        ) : (
+          <li>
+            <AccountProfile
+              avatar={userInfo?.photoURL || ""}
+              name={userInfo?.displayName || ""}
+              email={userInfo?.email || ""}
+              logOut={handleLogout}
+            />
+          </li>
+        )}
       </ul>
     </nav>
   );
 };
+
+export default NavBar;
